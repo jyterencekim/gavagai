@@ -1,0 +1,2 @@
+- Consider turning `gavagai` into a singleton created by injecting configs, etc.
+- Support a session (inject the prompt only once at the beginning, keep the conversation context, continue inputs; verify outputs and when outputs start to become weird/illegal, enforce the prompt once again; manage each conversation in a separate UUID)

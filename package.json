@@ -1,0 +1,59 @@
+{
+  "name": "gavagai",
+  "version": "0.2.0",
+  "description": "LLM Configuration + Thin Execution Layer for Fuzzy Utterances",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "example": "node --env-file=.env --import tsx examples/ledger.ts",
+    "example:prompt": "node --import tsx examples/ledger-prompt-only.ts"
+  },
+  "keywords": [
+    "llm",
+    "nlp",
+    "intent",
+    "interpretation",
+    "ontology",
+    "anthropic",
+    "openai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.33.0",
+    "openai": "^4.73.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.33.0",
+    "@types/node": "^22.10.0",
+    "openai": "^4.73.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  }
+}
