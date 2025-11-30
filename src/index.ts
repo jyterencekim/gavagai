@@ -8,6 +8,9 @@
 export { interpret } from './interpret.js';
 export type { Logger, InterpretOptionsWithDebug } from './interpret.js';
 
+// Client instance
+export { GavagaiClient } from './client.js';
+
 // Validation
 export { validate, shouldAutoExecute, parseResponse, safeParseResponse } from './validate.js';
 
