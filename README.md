@@ -330,6 +330,106 @@ const userMessage = buildUserMessage(input);
 
 See `examples/ledger-prompt-only.ts` for complete examples.
 
+### Instance Pattern
+
+For applications that repeatedly interpret utterances with the same configuration, the `GavagaiClient` class provides a cleaner, more ergonomic API. Instead of passing `ontology` and `model` to every `interpret()` call, create a client instance once and reuse it.
+
+**Benefits:**
+
+- **DRY (Don't Repeat Yourself)**: Configure ontology, model, and default options once
+- **Encapsulation**: Bind configuration to a client instance
+- **Future-Ready**: Foundation for state management (caching, metrics) without breaking changes
+- **Convenience Methods**: Built-in `validate()`, `shouldAutoExecute()`, `buildPrompt()` bound to your configuration
+
+**Example:**
+
+```typescript
+import { GavagaiClient, registerAdapter, AnthropicAdapter } from 'gavagai';
+
+// Register adapter
+registerAdapter(new AnthropicAdapter());
+
+// Create client with ontology, model, and default options
+const client = new GavagaiClient(ontology, modelSpec, {
+  currentDate: '2024-01-17',
+  knowledgeBase: {
+    context: { userLocation: 'San Francisco' },
+    knowledge: { businessRules: ['Transactions over $100 need review'] }
+  }
+});
+
+// Interpret using default options
+const response = await client.interpret(utterance);
+
+// Override per-call
+const response2 = await client.interpret(utterance, {
+  debug: true,
+  knowledgeBase: { context: { userLocation: 'New York' } } // Overrides default
+});
+
+// Use convenience methods
+const validation = client.validate(response);
+const canAutoExecute = client.shouldAutoExecute(proposition);
+const { system, user } = client.buildPrompt(utterance);
+```
+
+**API:**
+
+```typescript
+class GavagaiClient {
+  constructor(
+    ontology: Ontology,
+    model: ModelSpec,
+    defaultOptions?: InterpretOptions
+  );
+
+  // Interpret with merged options (per-call overrides defaults)
+  async interpret(
+    input: GavagaiInput,
+    opts?: InterpretOptionsWithDebug
+  ): Promise<GavagaiResponse>;
+
+  // Build prompt without calling LLM
+  buildPrompt(
+    input: GavagaiInput,
+    opts?: InterpretOptions
+  ): { system: string; user: string };
+
+  // Validate response against client's ontology
+  validate(response: GavagaiResponse): ValidationResult;
+
+  // Check if proposition can be auto-executed
+  shouldAutoExecute(prop: IntentionProposition): boolean;
+
+  // Access client configuration
+  getOntology(): Ontology;
+  getModel(): ModelSpec;
+  getDefaultOptions(): InterpretOptions | undefined;
+}
+```
+
+**When to Use:**
+
+- ✅ **Use GavagaiClient** when you're making multiple interpret calls with the same ontology/model
+- ✅ **Use GavagaiClient** when you want default options (like `knowledgeBase`) applied to all calls
+- ✅ **Use GavagaiClient** when you want cleaner, more object-oriented code
+- ❌ **Use functional `interpret()`** for one-off calls or when configuration varies per call
+
+**Backwards Compatibility:**
+
+The functional API remains unchanged. You can adopt `GavagaiClient` incrementally without breaking existing code:
+
+```typescript
+// Functional API (still works, no changes)
+await interpret(input, ontology, model, opts);
+
+// Instance API (new, optional)
+const client = new GavagaiClient(ontology, model);
+await client.interpret(input, opts);
+```
+
+See `examples/ledger-instance.ts` for complete examples.
+
 ---
 
 ## 5. Prompt Assembly

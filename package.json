@@ -17,7 +17,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "example": "node --env-file=.env --import tsx examples/ledger.ts",
-    "example:prompt": "node --import tsx examples/ledger-prompt-only.ts"
+    "example:prompt": "node --import tsx examples/ledger-prompt-only.ts",
+    "example:instance": "node --env-file=.env --import tsx examples/ledger-instance.ts"
   },
   "keywords": [
     "llm",
